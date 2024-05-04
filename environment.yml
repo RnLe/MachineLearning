@@ -1,0 +1,22 @@
+name: TUDortmundML
+dependencies:
+  - python=3.12
+  - tensorflow=2.1.0
+  - h5py
+  - numpy
+  - matplotlib
+  - ipython
+  - scikit-learn
+  - pandas
+  - scipy
+  - seaborn
+  - pydot
+  - pip
+
+  - pip:
+    - wget
+    - graphviz
+    - hyperas
+    - mlxtend
+    - gdown
+
