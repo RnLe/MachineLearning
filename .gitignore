@@ -1,2 +1,4 @@
 # Ignore datasets
 */dataset/
+*.zip
+*/chache/
