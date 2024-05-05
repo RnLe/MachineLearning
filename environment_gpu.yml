@@ -1,0 +1,23 @@
+name: tf_gpu
+dependencies:
+  - python
+  - tensorflow-gpu
+  - h5py
+  - numpy
+  - matplotlib
+  - ipython
+  - scikit-learn
+  - pandas
+  - scipy
+  - seaborn
+  - pydot
+  - pip
+
+  - pip:
+    - wget
+    - graphviz
+    - hyperas
+    - mlxtend
+    - gdown
+    - opencv-python
+

@@ -10,10 +10,17 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 
-NUM_THREADS = 20
+# NUM_THREADS = 20
 
-tf.config.threading.set_intra_op_parallelism_threads(NUM_THREADS)
-tf.config.threading.set_inter_op_parallelism_threads(NUM_THREADS)
+# tf.config.threading.set_intra_op_parallelism_threads(NUM_THREADS)
+# tf.config.threading.set_inter_op_parallelism_threads(NUM_THREADS)
+
+# # Switch to GPU
+# physical_devices = tf.config.experimental.list_physical_devices('GPU')
+# print("Num GPUs Available: ", len(physical_devices))
+# print(physical_devices)
+# if len(physical_devices) > 0:
+#     tf.config.experimental.set_memory_growth(physical_devices[0], True)
 
 # DATASET
 # files in dataset/test and dataset/train
@@ -72,7 +79,9 @@ model = tf.keras.models.Sequential([
     tf.keras.layers.Dense(7, activation='softmax')
 ])
 
+print("Compiling model...")
 model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+print("Model compiled")
 
 # Anzahl der Klassen
 num_classes = 7
@@ -115,6 +124,8 @@ def process_path(file_path, label_lookup):
     label = encode_label(label, label_lookup)
     return img, label
 
+print("Loading dataset...")
+
 # Dataset-Erstellung und Mapping
 train_ds = tf.data.Dataset.list_files(str(pathlib.Path(train_dir) / '*/*.png'), shuffle=False)
 train_ds = train_ds.map(lambda x: process_path(x, label_lookup), num_parallel_calls=tf.data.experimental.AUTOTUNE)
@@ -125,7 +136,11 @@ test_ds = test_ds.map(lambda x: process_path(x, label_lookup), num_parallel_call
 train_ds = train_ds.shuffle(2000).batch(64).prefetch(tf.data.experimental.AUTOTUNE).cache()
 test_ds = test_ds.shuffle(2000).batch(64).prefetch(tf.data.experimental.AUTOTUNE).cache()
 
+print("Dataset loaded")
+
+print("Load model...")
 model = load_model(model_dir + '/model.h5')
+print("Model loaded")
 
 checkpoint_callback = tf.keras.callbacks.ModelCheckpoint(
     filepath='models/model.h5',
@@ -136,6 +151,8 @@ checkpoint_callback = tf.keras.callbacks.ModelCheckpoint(
     verbose=1
 )
 
+print("Training model...")
+
 history = model.fit(
     train_ds,
     verbose=1,
@@ -143,6 +160,8 @@ history = model.fit(
     validation_data=test_ds,
     callbacks=[checkpoint_callback]
 )
+
+print("Model trained")
 
 # PLOT TRAINING AND VALIDATION ACCURACY
 plt.plot(history.history['accuracy'], label='accuracy')
