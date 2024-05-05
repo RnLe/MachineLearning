@@ -2,8 +2,15 @@
 # Target classes: Angry, Disgusted, Fearful, Happy, Sad, Surprised, Neutral
 
 import tensorflow as tf
+from tensorflow.keras.layers import Rescaling
+from tensorflow.keras.models import load_model
+import pathlib
+import os
+import cv2
+import numpy as np
+import matplotlib.pyplot as plt
 
-NUM_THREADS = 10
+NUM_THREADS = 20
 
 tf.config.threading.set_intra_op_parallelism_threads(NUM_THREADS)
 tf.config.threading.set_inter_op_parallelism_threads(NUM_THREADS)
@@ -12,16 +19,14 @@ tf.config.threading.set_inter_op_parallelism_threads(NUM_THREADS)
 # files in dataset/test and dataset/train
 # subfolders: angry, disgusted, fearful, happy, sad, surprised, neutral
 
-# load dataset
+# Directories
 train_dir = 'dataset/train'
 test_dir = 'dataset/test'
+cache_dir = 'cache'
+model_dir = 'models'
 
 # Test data
 # Check for the number of images in each class and the size of the images
-import os
-import cv2
-import numpy as np
-import matplotlib.pyplot as plt
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '0'  # 0 = alle Meldungen werden ausgegeben
 
@@ -68,9 +73,6 @@ model = tf.keras.models.Sequential([
 ])
 
 model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
-
-from tensorflow.keras.layers import Rescaling
-import pathlib
 
 # Anzahl der Klassen
 num_classes = 7
@@ -120,23 +122,22 @@ train_ds = train_ds.map(lambda x: process_path(x, label_lookup), num_parallel_ca
 test_ds = tf.data.Dataset.list_files(str(pathlib.Path(test_dir) / '*/*.png'), shuffle=False)
 test_ds = test_ds.map(lambda x: process_path(x, label_lookup), num_parallel_calls=tf.data.experimental.AUTOTUNE)
 
-cache_dir = 'cache'
+train_ds = train_ds.shuffle(2000).batch(64).prefetch(tf.data.experimental.AUTOTUNE).cache()
+test_ds = test_ds.shuffle(2000).batch(64).prefetch(tf.data.experimental.AUTOTUNE).cache()
 
-train_ds = train_ds.shuffle(640).batch(64).prefetch(tf.data.experimental.AUTOTUNE).cache()
-test_ds = test_ds.shuffle(640).batch(64).prefetch(tf.data.experimental.AUTOTUNE).cache()
+model = load_model(model_dir + '/model.h5')
 
 checkpoint_callback = tf.keras.callbacks.ModelCheckpoint(
     filepath='models/model.h5',
     save_best_only=True,
-    monitor='val_loss',  # Überwachte Metrik
-    mode='min',  # 'min' für Metriken, die minimiert werden sollen, 'max' für maximierende Metriken
-    save_weights_only=False,  # True, wenn nur Gewichte gespeichert werden sollen, False für das gesamte Modell
+    monitor='loss',
+    mode='min',
+    save_weights_only=False,
     verbose=1
 )
 
 history = model.fit(
     train_ds,
-    # Show all logs
     verbose=1,
     epochs=100,
     validation_data=test_ds,
