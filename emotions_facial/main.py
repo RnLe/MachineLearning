@@ -10,7 +10,7 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 
-# NUM_THREADS = 20
+# NUM_THREADS = 2
 
 # tf.config.threading.set_intra_op_parallelism_threads(NUM_THREADS)
 # tf.config.threading.set_inter_op_parallelism_threads(NUM_THREADS)
