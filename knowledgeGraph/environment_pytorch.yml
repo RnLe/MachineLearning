@@ -13,9 +13,12 @@ dependencies:
   - torchvision
   - torchaudio
   - cpuonly # To install the CPU version of PyTorch (instead for GPU: cudatoolkit)
+  - matplotlib
+  
   - pip:
     - torch-scatter
     - torch-sparse
     - torch-cluster
     - torch-spline-conv
     - torch-geometric
+    - opencv-python
