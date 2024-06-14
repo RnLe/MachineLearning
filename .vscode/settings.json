@@ -1,0 +1,4 @@
+{
+    "python.analysis.autoImportCompletions": true,
+    "python.pythonPath": "/home/renlephy/miniconda3/envs/tf_gpu2/bin/python"
+}
