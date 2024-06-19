@@ -1,5 +1,5 @@
 # Ignore datasets
-*/emotions_facial/dataset/
+*/dataset_old/
 */knowledgeGraph/dataset/
 */dataset/
 *.zip
