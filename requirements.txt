@@ -1,0 +1,18 @@
+# development
+black
+pytest
+matplotlib
+jupyter
+ipython
+
+# data handling
+#sqlalchemy
+#psycopg2-binary
+pandas
+numpy
+opencv-python
+
+# DNN
+torch
+tensorflow
+#torch-geometric

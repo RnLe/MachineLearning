@@ -5,3 +5,12 @@
 *.zip
 */cache/
 *.h5
+
+# Ignore virtual environments
+venv/
+
+# Ignore IDE files
+*.vim
+
+# Ignore jupyter stuff
+.ipynb_checkpoints/
