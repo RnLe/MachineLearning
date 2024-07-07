@@ -14,3 +14,4 @@ venv/
 
 # Ignore jupyter stuff
 .ipynb_checkpoints/
+__pycache__/
