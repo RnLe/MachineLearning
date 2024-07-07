@@ -1,5 +1,22 @@
 import pathlib
+import os
 import tensorflow as tf
+
+
+def _prepare_label_lookup(directory):
+    file_paths = tf.data.Dataset.list_files(
+        str(pathlib.Path(directory) / "*/*"), shuffle=False
+    )
+    labels = file_paths.map(lambda x: tf.strings.split(x, os.path.sep)[-2])
+    label_lookup = tf.keras.layers.StringLookup(num_oov_indices=0)
+    label_lookup.adapt(labels)
+    return label_lookup
+
+
+def _encode_label(label, label_lookup):
+    label_id = label_lookup(label)
+    depth = tf.cast(label_lookup.vocabulary_size(), tf.int32)
+    return tf.one_hot(label_id, depth=depth)
 
 
 def _process_path(file_path, label_lookup):
@@ -19,43 +36,26 @@ def _process_path(file_path, label_lookup):
     parts = tf.strings.split(file_path, "/")
     label = parts[-2]
     # Look up the label index
-    label = tf.strings.as_string(label)
-    label = label_lookup[label.numpy().decode("utf-8")]
+    label = _encode_label(label, label_lookup)
     return image, label
 
 
 def load(train_dir, test_dir):
-    class_names = sorted(
-        [item.name for item in pathlib.Path(train_dir).glob("*/") if item.is_dir()]
-    )
-    label_lookup = {name: idx for idx, name in enumerate(class_names)}
-
+    label_lookup = _prepare_label_lookup(train_dir)
     # Load the training dataset
-    train_jpg_ds = tf.data.Dataset.list_files(
-        str(pathlib.Path(train_dir) / "*/*.jpg"), shuffle=True
+    train_ds = tf.data.Dataset.list_files(
+        str(pathlib.Path(train_dir) / "*/*"), shuffle=True
     )
-    train_png_ds = tf.data.Dataset.list_files(
-        str(pathlib.Path(train_dir) / "*/*.png"), shuffle=True
-    )
-
-    train_ds = train_jpg_ds.concatenate(train_png_ds)
     train_ds = train_ds.map(
         lambda x: _process_path(x, label_lookup),
         num_parallel_calls=tf.data.experimental.AUTOTUNE,
     )
-
     # Load the test dataset for jpg and png files
-    test_jpg_ds = tf.data.Dataset.list_files(
-        str(pathlib.Path(test_dir) / "*/*.jpg"), shuffle=False
+    test_ds = tf.data.Dataset.list_files(
+        str(pathlib.Path(test_dir) / "*/*"), shuffle=False
     )
-    test_png_ds = tf.data.Dataset.list_files(
-        str(pathlib.Path(test_dir) / "*/*.png"), shuffle=False
-    )
-
-    test_ds = test_jpg_ds.concatenate(test_png_ds)
     test_ds = test_ds.map(
         lambda x: _process_path(x, label_lookup),
         num_parallel_calls=tf.data.experimental.AUTOTUNE,
     )
-
     return test_ds, train_ds
