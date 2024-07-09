@@ -1,4 +1,6 @@
 import densenet
+import tensorflow as tf
+from tensorflow.keras import optimizers
 
 
 def test_DenseNet():
