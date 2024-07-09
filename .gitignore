@@ -1,10 +1,16 @@
 # Ignore datasets
+*/dataset*/
 */dataset_old/
 */knowledgeGraph/dataset/
 */dataset/
 *.zip
 */cache/
+
+# Ignore models
 *.h5
+*.hdf5
+*.keras
+*.pth
 
 # Ignore virtual environments
 venv/

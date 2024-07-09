@@ -20,3 +20,5 @@ dependencies:
     - gdown
     - opencv-python
     - tensorflow[and-cuda]
+    - pytest
+    - optuna
