@@ -1,5 +1,6 @@
 # development
 black
+black[jupyter]
 pytest
 matplotlib
 jupyter
@@ -11,6 +12,7 @@ ipython
 pandas
 numpy
 opencv-python
+seaborn
 
 # DNN
 torch
