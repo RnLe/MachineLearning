@@ -1,7 +1,10 @@
 import tensorflow as tf
 from tensorflow.keras import layers, Model, regularizers
+import tensorflow.keras.saving
+keras = tensorflow.keras
 
 
+@keras.saving.register_keras_serializable(package="CustomDenseBlock")
 class DenseBlock(layers.Layer):
     def __init__(
         self,
@@ -20,6 +23,8 @@ class DenseBlock(layers.Layer):
 
         for i in range(num_layers):
             self.layers_list.append(self._make_layer(growth_rate, name=f"layer_{i+1}"))
+        if self.dropout_rate > 0:
+            self.layers_list.append(layers.Dropout(self.dropout_rate))
 
     def _make_layer(self, growth_rate, name=None):
         layers_seq = [
@@ -41,8 +46,6 @@ class DenseBlock(layers.Layer):
                 kernel_regularizer=regularizers.l2(self.l2_regularization),
             ),
         ]
-        if self.dropout_rate > 0:
-            layers_seq.append(layers.Dropout(self.dropout_rate))
         return tf.keras.Sequential(layers_seq, name=name)
 
     def call(self, inputs):
@@ -53,6 +56,7 @@ class DenseBlock(layers.Layer):
         return x
 
 
+@keras.saving.register_keras_serializable(package="CustomTransitionLayer")
 class TransitionLayer(layers.Layer):
     def __init__(self, reduction, l2_regularization=1e-4, name=None):
         super(TransitionLayer, self).__init__(name=name)
@@ -77,13 +81,14 @@ class TransitionLayer(layers.Layer):
         x = self.bn(inputs)
         x = self.relu(x)
         x = self.conv(x)
-        #if self.avg_pool is not None:
+        # if self.avg_pool is not None:
         #    x = self.avg_pool(x)
         if self.avg_pool and x.shape[1] > 1 and x.shape[2] > 1:
             x = self.avg_pool(x)
         return x
 
 
+# @keras.saving.register_keras_serializable(package="CustomDenseNet")
 class DenseNet(Model):
     def __init__(
         self,

@@ -1,9 +1,14 @@
-import numpy as np
-import matplotlib.pyplot as plt
-from sklearn.metrics import confusion_matrix
-from sklearn.metrics import classification_report
-import seaborn as sns
+import os
 import random
+
+import cv2
+import matplotlib.pyplot as plt
+import numpy as np
+import seaborn as sns
+from sklearn.utils import class_weight
+from tensorflow.keras.utils import to_categorical
+from sklearn.metrics import classification_report
+from sklearn.metrics import confusion_matrix
 
 
 def plot_history(history, modelName=""):
@@ -57,7 +62,51 @@ def plot_history(history, modelName=""):
     plt.show()
 
 
-def evaluate(model, x_test, y_test, y_test_encoded):
+def load_data(directory, classes, greyscale=True):
+    """load_data loads data as np.array, not as tensorflow abstract tensor
+    """
+    # Load test data
+    x = []
+    y = []
+    for i, c in enumerate(classes):
+        path = os.path.join(directory, c)
+        for img_name in os.listdir(path):
+            img = cv2.imread(os.path.join(path, img_name))
+            if img is not None:  # Ensure the image was read correctly
+                if greyscale:
+                    img = cv2.resize(img, (48, 48))
+                    # Image to greyscale and shape (48, 48, 1)
+                    img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+                    img = np.expand_dims(
+                        img, axis=-1
+                    )  # Add channel dimension for greyscale images
+                else:
+                    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+                # Normalize the image
+                img = img / 255.0
+                x.append(img)
+                y.append(i)
+    x = np.array(x)
+    y = np.array(y)
+    y_encoded = to_categorical(y, num_classes=len(classes))
+    return x, y, y_encoded
+
+
+def create_class_weights(y_train_encoded):
+    y_train_labels = np.argmax(y_train_encoded, axis=1)
+    y_train_labels = y_train_labels.astype(np.int32)
+    # Berechnung der Klassengewichte
+    class_weights = class_weight.compute_class_weight(
+        class_weight="balanced", classes=np.unique(y_train_labels), y=y_train_labels
+    )
+    # Convert the class weights to a dictionary. Use np.int32 as the key type
+    class_weights_dict = {
+        int(k): float(v) for k, v in zip(np.unique(y_train_labels), class_weights)
+    }
+    return class_weights_dict
+
+
+def evaluate(model, x_test, y_test, y_test_encoded, classes):
     # Evaluate model
     evaluation = model.evaluate(x_test, y_test_encoded)
     print(evaluation)
