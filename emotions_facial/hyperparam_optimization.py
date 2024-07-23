@@ -115,6 +115,7 @@ def create_study(args):
         load_if_exists=True,
     )
     study.optimize(objective, n_trials=num_trials)
+    return study
 
 
 def main():
