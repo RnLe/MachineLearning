@@ -15,7 +15,7 @@ To set up the environment and run the project, follow these steps:
 1. Clone the repository:
     ```bash
     git clone https://github.com/RnLe/MachineLearning.git
-    MachineLearning
+    cd MachineLearning
     ```
 
 2. Create and activate the conda environment:
