@@ -59,9 +59,9 @@ def create_study(args):
         num_layers_per_block = gaussian_peak(min_layers, max_layers, num_blocks)
         print("XXX", num_layers_per_block)
         # Suggest other parameters
-        growth_rate = trial.suggest_categorical("growth_rate", [16, 32, 48])
-        reduction = trial.suggest_uniform("reduction", 0.4, 0.6)
-        dropout_rate = trial.suggest_uniform("dropout_rate", 0.0, 0.4)
+        growth_rate = trial.suggest_categorical("growth_rate", [16, 32, 48, 64])
+        reduction = trial.suggest_uniform("reduction", 0.3, 0.7)
+        dropout_rate = trial.suggest_uniform("dropout_rate", 0.0, 0.5)
         l2_regularization = trial.suggest_loguniform("l2_regularization", 1e-6, 1e-3)
 
         # Define the model using the suggested parameters
@@ -122,7 +122,7 @@ def main():
     from optparse import OptionParser
 
     parser = OptionParser(description="Run hyperparameter optimization for DenseNet.")
-    default_num_trials = 50
+    default_num_trials = 200
     parser.add_option(
         "-n",
         "--num-trials",
@@ -131,7 +131,7 @@ def main():
         type=int,
         help="Number of trials for the optimization.",
     )
-    default_epochs = 20
+    default_epochs = 15
     parser.add_option(
         "-e",
         "--epochs",
