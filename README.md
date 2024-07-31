@@ -24,6 +24,8 @@ To set up the environment and run the project, follow these steps:
     conda activate facial-emotion-detection
     ```
 
+3. Download the dataset from [Google Drive](https://drive.google.com/file/d/1EohQa17A_wiTfE_q6QmBumhSZ0wDhx5_/view?usp=sharing) and extract the `.zip` in the folder `emotions_facial`.
+
 ## Usage
 
 To execute the code, you can simply run the `main.ipynb` notebook. This notebook uses the optimal hyperparameters from the `optuna.db` file.
