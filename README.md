@@ -1,6 +1,52 @@
-# MachineLearning
+# Facial Emotion Detection with DenseNet
 
-This repository consists of multiple machine learning projects that I actively work on.
+This repository contains the project work for the module Machine Learning for Physicists 2024. The project focuses on implementing a DenseNet architecture for facial emotion detection and comparing its performance with a traditional Convolutional Neural Network (CNN) approach.
 
-## Frameworks
-Tensorflow is the primary framework used in this repository. Since the GPU version of Tensorflow is hard to set up, I use the CPU version.
+## Table of Contents
+- [Installation](#installation)
+- [Usage](#usage)
+- [Files](#files)
+- [Acknowledgments](#acknowledgments)
+
+## Installation
+
+To set up the environment and run the project, follow these steps:
+
+1. Clone the repository:
+    ```bash
+    git clone https://github.com/username/facial-emotion-detection.git
+    cd facial-emotion-detection
+    ```
+
+2. Create and activate the conda environment:
+    ```bash
+    conda env create -f environment.yml
+    conda activate facial-emotion-detection
+    ```
+
+## Usage
+
+To execute the code, you can simply run the `main.ipynb` notebook. This notebook uses the optimal hyperparameters from the `optuna.db` file.
+
+```bash
+jupyter notebook main.ipynb
+```
+
+## Files
+
+- `main.ipynb`: Main notebook, using optimal hyperparameters from `optuna.db`.
+- `densenet.py`: Implementation of the DenseNet class.
+- `alternativeMethod_CNN.ipynb`: Notebook for the alternative method.
+- `hyperparam_optimization.py`: Hyperparameter optimization using Optuna.
+
+Note: The optimal hyperparameters are already provided in the project files.
+
+## Acknowledgments
+
+This project was completed as part of the Machine Learning for Physicists 2024 module at [TU Dortmund](https://www.tu-dortmund.de/en/).
+
+For any questions or issues, please feel free to contact the authors.
+
+---
+
+Enjoy exploring the project and feel free to contribute or provide feedback!
